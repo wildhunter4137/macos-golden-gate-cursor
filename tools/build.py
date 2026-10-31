@@ -128,6 +128,10 @@ def square(c, scale, N):
 
 # ---------------------------------------------------------------- Windows
 WIN_SIZES = [32, 48, 64, 96, 128]          # 100% .. 400% scaling
+# Windows refuses an .ani whose frames hold an image starting beyond byte 65535 of the frame
+# ("could not be found or is corrupted"). With 32+48+64+96 px the last image starts at ~31 KB;
+# adding 128 px pushes it past the limit, so animated cursors stop at 96 px.
+ANI_SIZES = [32, 48, 64, 96]
 
 
 def _dib(im):
@@ -154,11 +158,12 @@ def _cur(entries):
 
 
 def write_windows_cursor(c, base):
-    per = [square(c, N / 32, N) for N in WIN_SIZES]
+    sizes = WIN_SIZES if c.frames == 1 else ANI_SIZES
+    per = [square(c, N / 32, N) for N in sizes]
     if c.frames == 1:
-        open(base + '.cur', 'wb').write(_cur([(N, hx, hy, _dib(fr[0])) for N, (fr, hx, hy) in zip(WIN_SIZES, per)]))
+        open(base + '.cur', 'wb').write(_cur([(N, hx, hy, _dib(fr[0])) for N, (fr, hx, hy) in zip(sizes, per)]))
         return os.path.basename(base) + '.cur'
-    icons = [_cur([(N, hx, hy, _dib(fr[k])) for N, (fr, hx, hy) in zip(WIN_SIZES, per)]) for k in range(c.frames)]
+    icons = [_cur([(N, hx, hy, _dib(fr[k])) for N, (fr, hx, hy) in zip(sizes, per)]) for k in range(c.frames)]
     jiffies = max(1, round(c.delay * 60))
     chunk = lambda t, d: t + struct.pack('<I', len(d)) + d + (b'\0' if len(d) % 2 else b'')
     anih = struct.pack('<9I', 36, c.frames, c.frames, 0, 0, 0, 0, jiffies, 1)

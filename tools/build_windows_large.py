@@ -9,6 +9,7 @@ Reuses the drawing / .cur / .ani code of build.py, but:
 
 Requires: Python 3.9+, Pillow, PyMuPDF (pip install pymupdf).
 Usage:    python tools/build_windows_large.py [scale]      # default scale 1.1
+          python tools/build_windows_large.py --fix-original-ani   # only rebuild the normal theme's .ani files
 """
 import os, plistlib, shutil, struct, sys
 
@@ -21,11 +22,15 @@ from PIL import Image
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import build                      # noqa: E402  (importing build has no side effects besides a temp dir)
 
-SCALE = float(sys.argv[1]) if len(sys.argv) > 1 else 1.1
+FIX_ORIGINAL_ANI = '--fix-original-ani' in sys.argv
+_args = [a for a in sys.argv[1:] if not a.startswith('--')]
+SCALE = float(_args[0]) if _args else 1.1
 NAME = 'macOS27-GoldenGate-Large'
 SCHEME = 'macOS 27 Golden Gate Large'
 STATIC_SIZES = [32, 48, 64, 96, 128, 192, 256]    # pointer size 1 .. 15 (32 px per 100 %)
-ANIMATED_SIZES = [32, 48, 64, 96, 128]            # animated files stay at the original sizes (file size)
+# Windows rejects an .ani whose frames hold an image starting beyond byte 65535 of the frame, so
+# animated cursors are limited to 32+48+64+96 px (see build.ANI_SIZES).
+ANIMATED_SIZES = build.ANI_SIZES
 
 
 def pdf_cursor_mupdf(name, folder):
@@ -90,6 +95,15 @@ def write_cursor(c, base):
 if __name__ == '__main__':
     root = build.ROOT
     orig = os.path.join(root, 'themes', 'windows', build.THEME)
+    if FIX_ORIGINAL_ANI:
+        # Re-create only the animated cursors of the normal Windows theme (scale 1.0, ANI_SIZES).
+        build.pdf_cursor = pdf_cursor_mupdf
+        for n, c in build.load_all().items():
+            if c.frames > 1:
+                write_cursor(c, os.path.join(orig, n))
+                print('rebuilt', n + '.ani')
+        shutil.rmtree(build.TMP, ignore_errors=True)
+        sys.exit(0)
     out = os.path.join(root, 'themes', 'windows', NAME)
     if os.path.exists(out):
         shutil.rmtree(out)
@@ -113,7 +127,7 @@ if __name__ == '__main__':
         'Double-click install.bat and confirm the administrator prompt.\r\n'
         'It copies the cursors, registers the "' + SCHEME + '" scheme, activates it and reloads the\r\n'
         'live cursor set - no further steps needed. It can be installed next to the normal package.\r\n\r\n'
-        'Static cursors contain 32-256 px images (pointer size 1-15); animated cursors contain 32-128 px.\r\n\r\n'
+        'Static cursors contain 32-256 px images (pointer size 1-15); animated cursors contain 32-96 px.\r\n\r\n'
         'Undo: choose "Windows Default" (or the normal scheme) in Mouse settings > Pointers and click Apply.\r\n')
     shutil.rmtree(build.TMP, ignore_errors=True)
     print(f'Wrote {out} (scale {SCALE})')
