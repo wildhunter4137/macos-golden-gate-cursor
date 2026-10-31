@@ -23,7 +23,7 @@ Detailed steps for each platform are in [docs/INSTALL.md](docs/INSTALL.md).
 ## What is included
 
 - **43 cursors**: arrow, I-beam (horizontal and vertical text), animated spinning wait cursor, animated "busy but clickable", the three new Golden Gate glove hands (pointing, open, closed), counting hands, all window/edge resize cursors, move, copy, alias, contextual menu, not-allowed, poof, help, crosshair, cell, zoom in/out and the two screenshot cursors.
-- **High resolution**: macOS cape at 1x/2x/5x/10x; Windows cursors at 32–128 px; Linux Xcursor at 24–96 px.
+- **High resolution**: macOS cape at 1x/2x/5x/10x; Windows cursors at 32–128 px (animated ones 32–96 px); Linux Xcursor at 24–96 px.
 - **Original sources** in [`source/`](source): Apple's vector PDFs with their `info.plist` metadata, the bitmap cursors decoded from SkyLight, and the Accessibility colour-layer templates.
 
 The full cursor-by-cursor mapping for each platform is in [docs/MAPPING.md](docs/MAPPING.md).

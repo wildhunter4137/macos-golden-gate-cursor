@@ -29,13 +29,13 @@ Also try: **System Settings → Accessibility → Display → Pointer**: reset o
 
 The reload step matters: writing the registry alone (the classic `.inf` route) leaves the running session showing the old pointers until something forces a reload, so the script calls `SystemParametersInfo` with `SPI_SETCURSORS` at the end. Cursors that have no Windows role (open/closed hand, copy, alias, zoom, etc.) can be assigned manually with **Browse…** in Mouse settings.
 
-Each `.cur`/`.ani` file contains 32, 48, 64, 96 and 128 px images, so the cursors stay sharp at any display scaling and pointer size.
+Each `.cur` file contains 32, 48, 64, 96 and 128 px images, and each `.ani` file 32, 48, 64 and 96 px images, so the cursors stay sharp at common display scalings and pointer sizes. (Animated cursors stop at 96 px: Windows refuses an `.ani` whose frames contain an image starting beyond byte 65535 of the frame, which a fifth 128 px image would cause, and then silently shows the default busy/wait cursor.)
 
 To undo: choose the *Windows Default* scheme and click **Apply**.
 
 ### Larger cursors
 
-`themes/windows/macOS27-GoldenGate-Large/` has the same cursors drawn 1.1x larger. Run its `install.bat` the same way; it installs to `C:\Windows\Cursors\macOS27-GoldenGate-Large` as the scheme *macOS 27 Golden Gate Large*, so both packages can stay installed. Static cursors include 32–256 px images; animated ones 32–128 px. Build it (or another factor) with `pip install pymupdf pillow` and `python tools/build_windows_large.py 1.1`.
+`themes/windows/macOS27-GoldenGate-Large/` has the same cursors drawn 1.1x larger. Run its `install.bat` the same way; it installs to `C:\Windows\Cursors\macOS27-GoldenGate-Large` as the scheme *macOS 27 Golden Gate Large*, so both packages can stay installed. Static cursors include 32–256 px images; animated ones 32–96 px. Build it (or another factor) with `pip install pymupdf pillow` and `python tools/build_windows_large.py 1.1`.
 
 Moving the pointer-size slider in *Settings → Accessibility → Mouse pointer and touch* makes Windows replace the active scheme; if that happens, select the scheme again in *Mouse settings → Pointers*.
 
