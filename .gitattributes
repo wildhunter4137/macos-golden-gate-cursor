@@ -1,0 +1,7 @@
+*.cur   binary
+*.ani   binary
+*.cape  binary
+*.pdf   binary
+*.png   binary
+*.bat   text eol=crlf
+themes/linux/**/cursors/* binary
