@@ -51,6 +51,7 @@ How each macOS cursor is used on every platform. File names are the macOS resour
 Notes:
 
 - `ibeamhorizontal` (HIServices) and `ibeam` (SkyLight id 101) are the same shape; the themes use the SkyLight bitmap, which is what macOS actually draws for the text cursor.
-- Windows roles without a macOS equivalent (Handwriting, Alternate Select, Location Select, Person Select) are left at the Windows default.
+- Windows roles without a macOS equivalent (Handwriting, Alternate Select, Location Select, Person Select) are left at the Windows default in the normal Windows package. The Large package fills them with stand-ins: Handwriting = `cross`, Alternate Select = `alternateselect` (`resizeup` with the hotspot at the arrow tip), Location Select and Person Select = `pointinghand`.
+- Windows has no role for the open/closed hand, `cell`, zoom, copy/alias or column/row-resize cursors. Browsers and other apps draw those themselves, so no pointer scheme can change them (macOS does apply them system-wide).
 - Every cursor is still installed as a file on Windows (`C:\Windows\Cursors\macOS27-GoldenGate`) and as an Xcursor file on Linux, so it can be assigned manually.
 - Linux aliases include the common CSS names, legacy X11 names and the hash names used by Qt/GTK; see `X_ALIASES` in `tools/build.py` for the full list.

@@ -111,6 +111,14 @@ if __name__ == '__main__':
 
     build.pdf_cursor = pdf_cursor_mupdf            # load_all() looks the name up at call time
     cursors = build.load_all()
+
+    # Windows roles without a macOS counterpart get a stand-in so they no longer fall back to the
+    # Windows default: Alternate Select (up arrow) = resizeup with the hotspot moved to the arrow tip.
+    up = cursors['resizeup']
+    alpha = up.render(1)[0].getchannel('A').point(lambda v: 255 if v > 128 else 0)
+    l, t, r, b = alpha.getbbox()                   # scale 1 == points
+    cursors['alternateselect'] = build.Cursor('alternateselect', up.w, up.h, (l + r) / 2, t, 1, 0, up.render)
+
     for n, c in cursors.items():
         write_cursor(enlarge(c, SCALE), os.path.join(out, n))
         print('built', n)
@@ -119,11 +127,29 @@ if __name__ == '__main__':
     bat = open(os.path.join(orig, 'install.bat'), 'rb').read().decode('utf-8')
     bat = bat.replace(build.THEME, NAME).replace('macOS 27 Golden Gate', SCHEME)
     assert NAME in bat and SCHEME in bat
+
+    # fill the four roles the normal package leaves at the Windows default
+    D = '%DEST%\\'
+    extra = {'NWPen': D + 'cross.cur', 'UpArrow': D + 'alternateselect.cur',
+             'Pin': D + 'pointinghand.cur', 'Person': D + 'pointinghand.cur'}
+    for role, path in extra.items():
+        old = f'/v {role} /t REG_SZ /d "" /f'
+        assert bat.count(old) == 1, role
+        bat = bat.replace(old, f'/v {role} /t REG_SZ /d "{path}" /f')
+    old_list = (f'{D}ibeam.cur,,{D}notallowed.cur', f'{D}move.cur,,{D}pointinghand.cur,,"')
+    new_list = (f'{D}ibeam.cur,{extra["NWPen"]},{D}notallowed.cur',
+                f'{D}move.cur,{extra["UpArrow"]},{D}pointinghand.cur,{extra["Pin"]},{extra["Person"]}"')
+    for o, n in zip(old_list, new_list):
+        assert bat.count(o) == 1, o
+        bat = bat.replace(o, n)
     open(os.path.join(out, 'install.bat'), 'w', newline='').write(bat)
 
     open(os.path.join(out, 'README.txt'), 'w', newline='').write(
         f'macOS 27 Golden Gate cursors for Windows 10 / 11 - LARGE ({SCALE:g}x)\r\n\r\n'
-        'Same cursors as the normal Windows package, drawn slightly larger.\r\n\r\n'
+        'Same cursors as the normal Windows package, drawn slightly larger.\r\n'
+        'Unlike the normal package it also assigns the four roles that package leaves at the Windows\r\n'
+        'default: Handwriting = cross, Alternate Select = alternateselect (up arrow), Location Select and\r\n'
+        'Person Select = pointinghand.\r\n\r\n'
         'Double-click install.bat and confirm the administrator prompt.\r\n'
         'It copies the cursors, registers the "' + SCHEME + '" scheme, activates it and reloads the\r\n'
         'live cursor set - no further steps needed. It can be installed next to the normal package.\r\n\r\n'

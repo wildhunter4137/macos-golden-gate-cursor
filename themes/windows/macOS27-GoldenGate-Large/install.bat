@@ -23,7 +23,7 @@ copy /y "%SRC%*.cur" "%DEST%\" >nul
 copy /y "%SRC%*.ani" "%DEST%\" >nul
 
 echo [2/3] Registering the "%SCHEME%" scheme ...
-set "LIST=%DEST%\arrow.cur,%DEST%\help.cur,%DEST%\busybutclickable.ani,%DEST%\wait.ani,%DEST%\cross.cur,%DEST%\ibeam.cur,,%DEST%\notallowed.cur,%DEST%\resizenorthsouth.cur,%DEST%\resizeeastwest.cur,%DEST%\resizenorthwestsoutheast.cur,%DEST%\resizenortheastsouthwest.cur,%DEST%\move.cur,,%DEST%\pointinghand.cur,,"
+set "LIST=%DEST%\arrow.cur,%DEST%\help.cur,%DEST%\busybutclickable.ani,%DEST%\wait.ani,%DEST%\cross.cur,%DEST%\ibeam.cur,%DEST%\cross.cur,%DEST%\notallowed.cur,%DEST%\resizenorthsouth.cur,%DEST%\resizeeastwest.cur,%DEST%\resizenorthwestsoutheast.cur,%DEST%\resizenortheastsouthwest.cur,%DEST%\move.cur,%DEST%\alternateselect.cur,%DEST%\pointinghand.cur,%DEST%\pointinghand.cur,%DEST%\pointinghand.cur"
 reg add "HKCU\Control Panel\Cursors\Schemes" /v "%SCHEME%" /t REG_SZ /d "%LIST%" /f >nul
 reg add "HKCU\Control Panel\Cursors" /ve /t REG_SZ /d "%SCHEME%" /f >nul
 reg add "HKCU\Control Panel\Cursors" /v Arrow /t REG_SZ /d "%DEST%\arrow.cur" /f >nul
@@ -32,17 +32,17 @@ reg add "HKCU\Control Panel\Cursors" /v AppStarting /t REG_SZ /d "%DEST%\busybut
 reg add "HKCU\Control Panel\Cursors" /v Wait /t REG_SZ /d "%DEST%\wait.ani" /f >nul
 reg add "HKCU\Control Panel\Cursors" /v Crosshair /t REG_SZ /d "%DEST%\cross.cur" /f >nul
 reg add "HKCU\Control Panel\Cursors" /v IBeam /t REG_SZ /d "%DEST%\ibeam.cur" /f >nul
-reg add "HKCU\Control Panel\Cursors" /v NWPen /t REG_SZ /d "" /f >nul
+reg add "HKCU\Control Panel\Cursors" /v NWPen /t REG_SZ /d "%DEST%\cross.cur" /f >nul
 reg add "HKCU\Control Panel\Cursors" /v No /t REG_SZ /d "%DEST%\notallowed.cur" /f >nul
 reg add "HKCU\Control Panel\Cursors" /v SizeNS /t REG_SZ /d "%DEST%\resizenorthsouth.cur" /f >nul
 reg add "HKCU\Control Panel\Cursors" /v SizeWE /t REG_SZ /d "%DEST%\resizeeastwest.cur" /f >nul
 reg add "HKCU\Control Panel\Cursors" /v SizeNWSE /t REG_SZ /d "%DEST%\resizenorthwestsoutheast.cur" /f >nul
 reg add "HKCU\Control Panel\Cursors" /v SizeNESW /t REG_SZ /d "%DEST%\resizenortheastsouthwest.cur" /f >nul
 reg add "HKCU\Control Panel\Cursors" /v SizeAll /t REG_SZ /d "%DEST%\move.cur" /f >nul
-reg add "HKCU\Control Panel\Cursors" /v UpArrow /t REG_SZ /d "" /f >nul
+reg add "HKCU\Control Panel\Cursors" /v UpArrow /t REG_SZ /d "%DEST%\alternateselect.cur" /f >nul
 reg add "HKCU\Control Panel\Cursors" /v Hand /t REG_SZ /d "%DEST%\pointinghand.cur" /f >nul
-reg add "HKCU\Control Panel\Cursors" /v Pin /t REG_SZ /d "" /f >nul
-reg add "HKCU\Control Panel\Cursors" /v Person /t REG_SZ /d "" /f >nul
+reg add "HKCU\Control Panel\Cursors" /v Pin /t REG_SZ /d "%DEST%\pointinghand.cur" /f >nul
+reg add "HKCU\Control Panel\Cursors" /v Person /t REG_SZ /d "%DEST%\pointinghand.cur" /f >nul
 
 echo [3/3] Reloading the cursor set ...
 rundll32.exe user32.dll,UpdatePerUserSystemParameters
